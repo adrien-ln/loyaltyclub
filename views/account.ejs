@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <body>
+    <%- include('header.ejs') %>
+    <div class="account-container">
+        <!-- Affichage des informations du compte client -->
+        <h3>Informations du compte</h3>
+        <h4><strong>Nom:</strong> <%= user.name %></h4>
+        <h4><strong>Email:</strong> <%= user.email %></h4>
+        <h4><strong>Date de naissance:</strong> <%= user.birthdate %></h4>
+        <h4><strong>Nombre de points restant:</strong> <%= user.points %></h4>
+        <h4><strong>Commandes Précédentes</strong></h4>
+        <table class="table table-bordered" id="table-commandes">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prix</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Boucle pour afficher les commandes du client-->
+                <% for (let i = 0; i < commandes.length; i++) { %>
+                <tr>
+                    <td><%= commandes[i].name %></td>
+                    <td><%= commandes[i].prix %></td>
+                    <td><%= commandes[i].date_commande %></td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+        <a href="/logout" class="logout-button btn btn-danger">Se déconnecter</a>
+    </body>
+    </div>
+</html>

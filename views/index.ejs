@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <body>
+        <%- include('header.ejs') %>
+        <script src="js/panier.js"></script>
+        <% if (!user) { %>
+            <!-- Affichez le formulaire de connexion ici -->
+            <%- include('login.ejs') %>
+            <ul>
+                <% if (typeof message != 'undefined') { %>
+                    <p><%= message %></p>
+                <% } %>
+            </ul>
+        <% } else { %>
+            <div class="container">
+                <h3>Menu des cadeaux</h3>
+                <!-- Vérifie si c'est l'anniversaire du client-->
+                <% if (isBirthday) { %>
+                    <h4 class="birthday-message">C'est votre anniversaire !</h4>
+                <% } %>
+                <h4>Vous avez <div id="nb_point"><%= user.points %></div> points</h4>
+                <div id="panier" style="display: none;">
+                    <div id="panier-header">
+                        <h3>Panier</h3>
+                        <span id="fermer-panier" onclick="fermerPanier()">X</span>
+                    </div>
+                    <ul id="liste-panier">
+                        <li class="item-panier"></li>
+                    </ul>
+                    <p>Total : <span id="total-panier">0</span> points</p>
+                    <button id="commander" onclick="commander()">Commander</button>
+                </div>
+                <div id="logo-panier" onclick="ouvrirPanier()" style="display: none;">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="nombre-articles">Mon panier</span>
+                </div>
+                <!-- Affichage des cadeaux -->
+                <div class="row">
+                    <% for (let i = 0; i < cadeaux.length; i++) { %>
+                        <% if(cadeaux[i].prix < user.points) { %>
+                            <div class="cadeau col-md-3 d-flex align-items-stretch">
+                                <div class="card h-80 w-80">
+                                    <img src="<%= cadeaux[i].image_url %>" title="<%= cadeaux[i].description%> "class="img-fluid card-img-top" >
+                                    <div class="card-body">
+                                        <h5 class="card-title"><%= cadeaux[i].name %></h5>
+                                        <p class="card-text" >Prix: <%= cadeaux[i].prix %> points</p>
+                                        <button class="btn btn-primary add-to-cart" type="button" data-id="<%= cadeaux[i].id %>" data-prix='<%= cadeaux[i].prix %>' onclick="ajouterAuPanier('<%= cadeaux[i].name %>', '<%= cadeaux[i].prix %>', '<%= cadeaux[i].id %>')">Ajouter au panier</button>
+                                    </div>
+                                </div>
+                            </div>
+                         <% } %>
+                    <% } %>
+                </div>
+            </div>            
+          <% } %>
+    </body>
+</html>

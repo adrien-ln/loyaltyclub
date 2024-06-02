@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loyalty Club</title>
+    <link href="/css/styles.css" rel="stylesheet">
+    <script src="/public/js/utils.js" type="script"></script>
+</head>
+</body>
+    <%- include('header.ejs') %>
+    <!-- Si l'utilisateur n'est pas connecté, afficher le formulaire de connexion -->
+    <% if (!gerant) { %>
+        <%- include('dashboardLogin.ejs') %>
+        <ul>
+            <% if (typeof message != 'undefined') { %>
+                <p><%= message %></p>
+            <% } %>
+        </ul>
+    <% } else { %>
+        <h3>Tableau de bord</h3>
+        <!-- Ajout des différentes erreurs de saisie du formulaire -->
+        <ul>
+            <% if (typeof errors != 'undefined') { %>
+                <% errors.forEach(function(error) { %>
+                    <li><%= error.message %></li>
+                <% }); %>
+            <% } %>
+        </ul>
+
+        <!-- Ajout des messages de succès -->
+        <% if (typeof message != 'undefined') { %>
+            <h4><%= message %></h4>
+        <% } %>
+        
+        <a href="/gerante/logout" class="logout-button btn btn-danger" style="align-self: center;" >Se déconnecter</a>
+        <!-- Menu déroulant pour afficher les différentes sections du tableau de bord -->
+        <div class="accordion" id="accordionDashboard">
+            <!-- Section liste des clients -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Clients
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionDashboard">
+                <div class="accordion-body">
+                    <div id="clients" class="container mt-4">
+                        <h4>Clients</h4>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nom</th>
+                                    <th>Email</th>
+                                    <th>Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- TODO: Afficher les données dans le tableau -->
+                                <% clients.forEach(client => { %>
+                                    <tr>
+                                        <td><%= client.id %></td>
+                                        <td><%= client.name %></td>
+                                        <td><%= client.email %></td>
+                                        <td><%= client.points %></td>
+                                        <td><%= client.birthdate %></td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- Section pour créer un compte client -->
+            <div class="accordion-item">
+                <h2 class="accordion-header"></h2>
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        Créez un compte client
+                    </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionDashboard">
+                    <div class="accordion-body">
+                        <div id="createAccount" class="container mt-4">
+                            <h3>Créez un compte client</h3>
+                            <form action="/gerante/register" method="POST">
+                                <div class="form-group">
+                                    <label for="name">Nom :</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email :</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="birthdate">Date de naissance :</label>
+                                    <input type="date" class="form-control" id="birthdate" name="birthdate" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Mot de passe :</label>
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword">Confirmez le mot de passe :</label>
+                                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section pour ajouter ou retirer des points -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                        Ajouter/Retirer des points
+                    </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" data-bs-parent="#accordionDashboard">
+                    <div class="accordion-body">
+                        <div id="addRemovePoints" class="container mt-4">
+                            <h3>Ajouter/Retirer des points</h3>
+                            <form action="/gerante/add-remove-points" method="POST">
+                                <div class="form-group">
+                                    <label for="clientID">ID du client :</label>
+                                    <input type="text" class="form-control" id="clientID" name="clientID" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="points">Points :</label>
+                                    <input type="number" class="form-control" id="points" name="points" required>
+                                </div>
+                                <div class="form-group" id="operation">
+                                    <label for="operation">Opération :</label>
+                                    <select class="form-control" id="operation" name="operation" required>
+                                        <option value="add">Ajouter</option>
+                                        <option value="remove">Retirer</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">Valider</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>  
+            
+            <!-- Section pour lister les cadeaux et en ajouter -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Cadeaux
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionDashboard">
+                <div class="accordion-body">
+                    <div id="cadeaux" class="container mt-4">
+                        <h4>Cadeaux</h4>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nom</th>
+                                    <th>Prix</th>
+                                    <th>Description</th>
+                                    <th>Image</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% cadeaux.forEach(cadeau => { %>
+                                    <tr>
+                                        <td><%= cadeau.id %></td>
+                                        <td><%= cadeau.name %></td>
+                                        <td><%= cadeau.prix %></td>
+                                        <td><%= cadeau.description %></td>
+                                        <td><img src="<%= cadeau.image_url %>" alt="<%= cadeau.name %>" width="100"></td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="addCadeau" class="container mt-4">
+                        <h3>Ajouter un cadeau</h3>
+                        <form action="/gerante/add-cadeau" method="POST">
+                            <div class="form-group">
+                                <label for="cadeauName">Nom :</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cadeauPrice">Prix :</label>
+                                <input type="number" class="form-control" id="prix" name="prix" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cadeauDescription">Description :</label>
+                                <textarea class="form-control" id="description" name="description" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="cadeauImage">URL de l'image :</label>
+                                <input type="text" class="form-control" id="image_url" name="image_url" required>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Ajouter</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- Section pour lister les commandes -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Commandes
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionDashboard">
+                    <div class="accordion-body">
+                        <div id="commandes" class="container mt-4">
+                            <h4>Commandes</h4>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Client ID</th>
+                                        <th>Cadeau ID</th>
+                                        <th>Date de commande</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% commandes.forEach(commande => { %>
+                                        <tr>
+                                            <td><%= commande.id %></td>
+                                            <td><%= commande.client_id %></td>
+                                            <td><%= commande.cadeau_id %></td>
+                                            <td><%= commande.date_commande %></td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
+</html>

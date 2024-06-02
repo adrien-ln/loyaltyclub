@@ -1,0 +1,24 @@
+{
+  "name": "projet-pw",
+  "version": "1.0.0",
+  "description": "Projet de Programmation Web 2024 : Site de cartes de fidélité.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gaufre.informatique.univ-paris-diderot.fr:leninive/projet-pw.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express-session": "^1.17.2",
+    "express": "^4.19.1",
+    "dotenv": "^16.0.0",
+    "bcrypt": "^5.1.1",
+    "ejs": "^3.1.9",
+    "pg": "^8.11.3"
+  }
+}
